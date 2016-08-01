@@ -1,6 +1,14 @@
 // require and instantiate express
 const app = require('express')()
 
+// New Code
+var mongo = require('mongodb');
+var monk = require('monk');
+//var db = monk('localhost:27017/nodetest1');
+var db = monk('localhost:27017/aniladvantagedb');
+
+
+
 // fake posts to simulate a database
 const posts = [
   {
@@ -29,13 +37,59 @@ const posts = [
   }
 ]
 
+
+const users = [
+  {
+    id: 1,
+    username: 'John',
+    email : 'john@john.com'
+  },
+  {
+    id: 2,
+    username: 'Drake',
+    email: 'drake@drake.com'
+  }
+]
+
+
+
 // set the view engine to ejs
 app.set('view engine', 'ejs')
+
+
+
 
 // blog home page
 app.get('/', (req, res) => {
   // render `home.ejs` with the list of posts
   res.render('home', { posts: posts })
+})
+
+// Users home page
+app.get('/users', (req, res) => {
+  // render `home.ejs` with the list of posts
+  //res.render('userview', { users: users })
+    var collection = db.get('usercollection');
+    collection.find({},{},function(e,docs){
+        res.render('userview', {
+            "users" : docs
+        });
+    });
+
+})
+
+
+// Users home page
+app.get('/patients', (req, res) => {
+  // render `home.ejs` with the list of posts
+  //res.render('userview', { users: users })
+    var collection = db.get('actualpatients');
+    collection.find({},{},function(e,docs){
+        res.render('patientsview', {
+            "patients" : docs
+        });
+    });
+
 })
 
 // blog post
